@@ -3,4 +3,14 @@
   <groupId>edu.uth.clamp</groupId>
   <artifactId>clamp-support</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>edu.uth.clamp</groupId>
+  		<artifactId>clamp-nlp</artifactId>
+  		<version>1.5.0.Aug</version>
+  	</dependency>
+  	
+  </dependencies>
 </project>
