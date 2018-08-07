@@ -11,6 +11,6 @@
   		<artifactId>clamp-nlp</artifactId>
   		<version>1.5.0.Aug</version>
   	</dependency>
-  	
+  	<!-- https://mvnrepository.com/artifact/org.apache.uima/uimaj-json -->  	
   </dependencies>
 </project>

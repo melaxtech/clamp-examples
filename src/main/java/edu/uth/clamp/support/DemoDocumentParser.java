@@ -1,8 +1,10 @@
 package edu.uth.clamp.support;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import org.apache.uima.UIMAException;
+
 import edu.uth.clamp.nlp.structure.ClampNameEntity;
 import edu.uth.clamp.nlp.structure.ClampRelation;
 import edu.uth.clamp.nlp.structure.ClampSentence;
@@ -46,7 +48,7 @@ public class DemoDocumentParser {
 			}
 			
 			System.out.println( "" );
-		}
+		}		
 		return;
 	}
 
