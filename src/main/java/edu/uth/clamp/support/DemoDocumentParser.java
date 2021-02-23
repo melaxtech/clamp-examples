@@ -34,7 +34,7 @@ public class DemoDocumentParser {
 			}
 			
 			System.out.println( "Named entities:" );
-			for( ClampNameEntity cne : sent.selectNE() ) {
+			for( ClampNameEntity cne : sent.getEntities() ) {
 				System.out.println( "\t" + cne.getBegin() + "\t" + cne.getEnd() + "\t" + cne.textStr() 
 					+ "\t" + cne.getSemanticTag() 
 					+ "\t" + cne.getUmlsCui()
@@ -46,10 +46,7 @@ public class DemoDocumentParser {
 			for( ClampRelation rel : XmiUtil.selectRelation( doc.getJCas(), sent.getBegin(), sent.getEnd() ) ) {
 				System.out.println( "\tsem=[" + rel.getSemanticTag() + "]. from=[" + rel.getEntFrom().textStr() + "],\tto=[" + rel.getEntTo().textStr() + "]" );
 			}
-			
-			System.out.println( "" );
-		}		
-		return;
+		}
 	}
 
 }

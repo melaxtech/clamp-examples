@@ -9,7 +9,7 @@
   	<dependency>
   		<groupId>edu.uth.clamp</groupId>
   		<artifactId>clamp-nlp</artifactId>
-  		<version>1.5.0.Aug</version>
+  		<version>1.6.4-SNAPSHOT</version>
   	</dependency>
   	<!-- https://mvnrepository.com/artifact/org.apache.uima/uimaj-json -->  	
   </dependencies>
