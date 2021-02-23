@@ -28,9 +28,10 @@ public class DemoTokenizer {
 			}
 			String content = FileUtils.file2String( file );
 			
-			FileWriter writer = new FileWriter( new File( outputDir + File.separator + file.getName() ) );
+			FileWriter writer = new FileWriter(outputDir + File.separator + file.getName());
+			// detect sentence;
 			for( String sent : sentDetector.sentDetect( content ) ) {
-				// detect sentence;
+				// tokenize sentence;
 				for( String token : tokenizer.tokenize( sent ) ) {
 					writer.write( token + " " );
 				}
@@ -39,7 +40,5 @@ public class DemoTokenizer {
 			writer.close();
 			System.out.println( file.getName() + " is processed.." );
 		}
-		
-		return;
 	}
 }
