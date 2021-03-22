@@ -68,7 +68,8 @@ invoke
 
   ```bash
   curl --location --request POST 'http://www.autowire-code.com/api/nlp' 
-  --header 'x-api-key: Bearer eyJ0eXAiOiJjikQiLCJhbGciOiJIUI1NiJ9.eyJ1c2VySWQiOiI1IiwidXJsjoiaHR0cDjOuH3d3dy5hdXRvd2lyZS1jb2RlLmNvbSJ9.lgNDASH4jip7jwuZVllNqiW1ZpSYdWuaOP92cmMlIi8' --header 'Content-Type: application/json' 
+  --header 'x-api-key: Bearer eyJ0eXAiOiJjikQiLCJhbGciOiJIUI1NiJ9.eyJ1c2VySWQiOiI1IiwidXJsjoiaHR0cDjOuH3d3dy5hdXRvd2lyZS1jb2RlLmNvbSJ9.lgNDASH4jip7jwuZVllNqiW1ZpSYdWuaOP92cmMlIi8' 
+  --header 'Content-Type: application/json' 
   --data-raw '{"pipeline":"default_pipeline_1:$LATEST","text":"PPPPP is a 21 yo female with past 
   psychiatric history significant for SIMD , opiate use disorder , benzodiazepine use disorder , 
   amphetamine use disorder, and generalized anxiety disorder who presents with SI with plan to 
