@@ -47,38 +47,7 @@ class MelaxClient:
             return {'status_code': 200, 'output': json.loads(rsp.content)['data']}
         return {'status_code': rsp.status_code, 'content': str(rsp.content, 'utf-8')}
 
-    def startjob(self, s3in: str, inregion: str, s3out: str, outregion: str, pipeline: str, jobname=None,
-                 encryption=''):
-        if jobname == None:
-            jobname = "job" + str(int(round(time.time() * 1000)))
-        payload = {
-            "name": jobname,
-            "input": s3in,
-            "output": s3out,
-            "inRegion": inregion,
-            "outRegion": outregion,
-            "pipeline": pipeline,
-            "encryption": encryption
-        }
-        rsp = requests.request('POST', self.url + "/api/jobnew", data=json.dumps(payload), headers=headers(self.key))
-        if rsp.status_code == 200:
-            return {'status_code': 200, 'output': json.loads(rsp.content)['data']}
-        return {'status_code': rsp.status_code, 'content': str(rsp.content, 'utf-8')}
-
-    def jobinfo(self, bizid: str):
-        payload = {"bizId": bizid}
-        rsp = requests.request('POST', self.url + "/api/jobinfo", data=json.dumps(payload), headers=headers(self.key))
-        if rsp.status_code == 200:
-            return {'status_code': 200, 'output': json.loads(rsp.content)['data']}
-        return {'status_code': rsp.status_code, 'content': str(rsp.content, 'utf-8')}
-
-    def stopjob(self, bizid: str):
-        rsp = requests.request('DELETE', self.url + "/api/jobstop/" + bizid, headers=headers(self.key))
-        if rsp.status_code == 200:
-            return {'status_code': 200, 'output': json.loads(rsp.content)['data']}
-        return {'status_code': rsp.status_code, 'content': str(rsp.content, 'utf-8')}
-
-
+    
 def read_key_file(key_path: str):
     with open(key_path, mode='r') as file_obj:
         content = file_obj.read().splitlines()[0]
@@ -122,21 +91,3 @@ if __name__ == '__main__':
     print("=================================================================")
     print("=================================================================")
 
-    jobresponse = client.startjob("s3://testofhong/input", "us-east-2", "s3://testofhong/output", "us-east-2",
-                                  "default_pipeline_3:1")
-    print(jobresponse)
-
-    print("=================================================================")
-    print("=================================================================")
-
-    infoRsp = client.jobinfo(jobresponse['output']['bizId'])
-    print(infoRsp)
-
-    print("=================================================================")
-    print("=================================================================")
-
-    stopRsp = client.stopjob(jobresponse['output']['bizId'])
-    print(stopRsp)
-
-    print("=================================================================")
-    print("=================================================================")
