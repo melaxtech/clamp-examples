@@ -64,6 +64,9 @@ invoke
   * **Code:** 400 NOT FOUND <br />
     **Content:** `{ error : "" }`
 
+  * **Code:** 500 <br />
+    **Content:** `{"timestamp":"","path":"/api/nlp","status":500,"error":"Internal Server Error","message":"","requestId":""}`
+
 * **Sample Call:**
 
   ```bash
