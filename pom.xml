@@ -27,7 +27,7 @@
 			</snapshots>
 		</repository>
 	</repositories>
-  
+ 
   <dependencies>
   	<dependency>
   		<groupId>edu.uth.clamp</groupId>
