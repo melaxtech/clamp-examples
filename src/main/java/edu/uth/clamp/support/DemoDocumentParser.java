@@ -1,7 +1,6 @@
 package edu.uth.clamp.support;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 import org.apache.uima.UIMAException;
 
@@ -34,7 +33,7 @@ public class DemoDocumentParser {
 			}
 			
 			System.out.println( "Named entities:" );
-			for( ClampNameEntity cne : sent.selectNE() ) {
+			for( ClampNameEntity cne : sent.getEntities() ) {
 				System.out.println( "\t" + cne.getBegin() + "\t" + cne.getEnd() + "\t" + cne.textStr() 
 					+ "\t" + cne.getSemanticTag() 
 					+ "\t" + cne.getUmlsCui()

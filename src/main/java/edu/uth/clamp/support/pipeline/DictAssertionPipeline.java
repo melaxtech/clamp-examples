@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.uth.clamp.nlp.structure.DocProcessor;
 import org.apache.uima.UIMAException;
 
 import edu.uth.clamp.config.ConfigurationException;
 import edu.uth.clamp.config.NLPProcessorConf;
 import edu.uth.clamp.io.DocumentIOException;
 import edu.uth.clamp.nlp.structure.Document;
-import edu.uth.clamp.nlp.uima.DocProcessor;
 
 public class DictAssertionPipeline {
 	
