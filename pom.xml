@@ -8,6 +8,7 @@
 		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 	<repositories>
+		<!--username:codametrix password:codaMelaxMetrixNLP for nexusrelease -->
 		<repository>
 			<id>melax-developer-nexus-releases</id>
 			<name>Melax Nexus Release Repository</name>
@@ -19,17 +20,17 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>melax-developer-nexus-snapshots</id>
-			<name>Melax Nexus Snapshot Repository</name>
-			<url>https://nexusrelease.melaxtech.com/repository/maven-snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
+<!--		<repository>-->
+<!--			<id>melax-developer-nexus-snapshots</id>-->
+<!--			<name>Melax Nexus Snapshot Repository</name>-->
+<!--			<url>https://nexusrelease.melaxtech.com/repository/maven-snapshots/</url>-->
+<!--			<releases>-->
+<!--				<enabled>false</enabled>-->
+<!--			</releases>-->
+<!--			<snapshots>-->
+<!--				<enabled>true</enabled>-->
+<!--			</snapshots>-->
+<!--		</repository>-->
 	</repositories>
 
   <dependencies>
