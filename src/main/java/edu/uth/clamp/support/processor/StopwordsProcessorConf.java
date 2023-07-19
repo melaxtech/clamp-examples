@@ -8,7 +8,7 @@ import java.util.Set;
 import edu.uth.clamp.config.NLPProcessorConf;
 import edu.uth.clamp.config.ProcessorOptions;
 import edu.uth.clamp.io.DocumentIOException;
-import edu.uth.clamp.nlp.util.ClampConstants;
+import edu.uth.clamp.util.ClampConstants;
 
 public class StopwordsProcessorConf extends NLPProcessorConf {
 	// component info;
