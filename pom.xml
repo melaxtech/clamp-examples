@@ -8,7 +8,6 @@
 		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 	<repositories>
-		<!--username:codametrix password:codaMelaxMetrixNLP for nexusrelease -->
 		<repository>
 			<id>melax-developer-nexus-releases</id>
 			<name>Melax Nexus Release Repository</name>
@@ -20,17 +19,6 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-<!--		<repository>-->
-<!--			<id>melax-developer-nexus-snapshots</id>-->
-<!--			<name>Melax Nexus Snapshot Repository</name>-->
-<!--			<url>https://nexusrelease.melaxtech.com/repository/maven-snapshots/</url>-->
-<!--			<releases>-->
-<!--				<enabled>false</enabled>-->
-<!--			</releases>-->
-<!--			<snapshots>-->
-<!--				<enabled>true</enabled>-->
-<!--			</snapshots>-->
-<!--		</repository>-->
 	</repositories>
 
   <dependencies>
@@ -39,6 +27,5 @@
   		<artifactId>clamp-nlp</artifactId>
   		<version>2.0.0-SNAPSHOT</version>
   	</dependency>
-  	<!-- https://mvnrepository.com/artifact/org.apache.uima/uimaj-json -->  	
   </dependencies>
 </project>
