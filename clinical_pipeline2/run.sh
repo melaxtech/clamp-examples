@@ -1,0 +1,1 @@
+java -jar target/clamp-nlp-service.jar --spring.config.location=./application.properties
