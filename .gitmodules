@@ -1,0 +1,3 @@
+[submodule "clinical_pipeline"]
+	path = clinical_pipeline
+	url = https://github.com/melaxtech/clamp-examples.git
