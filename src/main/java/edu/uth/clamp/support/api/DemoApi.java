@@ -1,11 +1,6 @@
 package edu.uth.clamp.support.api;
 
 import com.google.gson.*;
-import edu.uth.clamp.nlp.structure.Document;
-import org.apache.uima.cas.impl.XmiCasDeserializer;
-import org.apache.uima.cas.impl.XmiCasSerializer;
-import org.apache.uima.jcas.JCas;
-import org.apache.uima.util.XMLSerializer;
 
 import java.io.*;
 import java.net.*;
@@ -17,14 +12,14 @@ import java.util.Map;
 public class DemoApi {
     private static String base_url = "http://localhost:8080";
 
-    //First command line parameter is xmi or json for which api endpoint to call
+    //First command line parameter is html xmi or json for which api endpoint to call
     // Second parameter is optional URL for pipeline, defaults to http://localhost:8080 (if parameter doesn't begin with http it is assumed to be text to send to pipeline
     //If other command line parameters are present then they are all concatenated together and sent to the pipeline
     public static void main(String[] argv) throws IOException {
         boolean customBaseUrl = false;
 
-        if (argv.length == 0 || (!argv[0].equalsIgnoreCase("xmi") && !argv[0].equalsIgnoreCase("json"))) {
-            System.out.println("First parameter should be xmi or json for api endpoint format");
+        if (argv.length == 0 || (!argv[0].equalsIgnoreCase("html") && !argv[0].equalsIgnoreCase("xmi") && !argv[0].equalsIgnoreCase("json"))) {
+            System.out.println("First parameter should be html xmi or json for api endpoint format");
         }
         if (argv.length > 1 && argv[1].startsWith("http")) {
             base_url = argv[1];
@@ -40,12 +35,7 @@ public class DemoApi {
                 data = data.substring(argv[1].length() + 1);
             }
         }
-        HttpURLConnection connection;
-        if (argv[0].equalsIgnoreCase("xmi")) {
-            connection = createConnection(argv[0], data);
-        } else {
-            connection = createConnection(argv[0], data);
-        }
+        HttpURLConnection connection = createConnection(argv[0], data);
         int responseCode = connection.getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK) {
             reportError(connection, responseCode);
@@ -56,18 +46,18 @@ public class DemoApi {
         try (InputStreamReader read = new InputStreamReader(connection.getInputStream());
              BufferedReader reader = new BufferedReader(read)) {
             while ((line = reader.readLine()) != null) {
-                responseBody.append(line);
+                responseBody.append(line).append("\n");
             }
         } catch (IOException e) {
             System.out.println("Error reading input stream from Normalize response\n" + e.toString());
             return;
         }
-        if (argv[0].equalsIgnoreCase("xmi")) {
-            try (PrintWriter pw = new PrintWriter("demoTest.xmi")) {
+        if (argv[0].equalsIgnoreCase("json")) {
+            processJson(responseBody.toString());
+        } else {
+            try (PrintWriter pw = new PrintWriter("demoTest." + argv[0], StandardCharsets.UTF_8)) {
                 pw.write(responseBody.toString());
             }
-        } else {
-            processJson(responseBody.toString());
         }
     }
 
@@ -77,6 +67,8 @@ public class DemoApi {
         URL url;
         if (type.equalsIgnoreCase("xmi")) {
             url = new URL(base_url + "/pipeline/xmi");
+        } else if (type.equalsIgnoreCase("html")) {
+            url = new URL(base_url + "/pipeline/html");
         } else {
             url = new URL(base_url + "/pipeline/json");
         }
@@ -145,24 +137,6 @@ public class DemoApi {
             }
 
             JsonObject entityObject = currentObject.getAsJsonObject(keys[keys.length - 1]);
-            JsonArray umlsConcepts = entityObject.getAsJsonArray("umlsConcepts");
-            StringBuilder umlsOutput = new StringBuilder("\t");
-            if (umlsConcepts != null) {
-                for (JsonElement concept : umlsConcepts) {
-                    String tui = concept.getAsJsonObject().getAsJsonPrimitive("tui").getAsString();
-                    if (tui.length() > 0) {
-                        umlsOutput.append("TUI: ").append(tui).append(" ");
-                    }
-                    String code = concept.getAsJsonObject().getAsJsonPrimitive("code").getAsString();
-                    if (code.length() > 0) {
-                        umlsOutput.append("code: ").append(code).append(" ");
-                    }
-                    String preferredText = concept.getAsJsonObject().getAsJsonPrimitive("preferredText").getAsString();
-                    if (preferredText.length() > 0) {
-                        umlsOutput.append("preferredText: ").append(preferredText).append(" ");
-                    }
-                }
-            }
             String basicInfo = getBasicInfo(entityObject, content);
             if (entityObject.getAsJsonPrimitive("type").getAsString().equals("Entity")) {
                 System.out.println("Entity: " + basicInfo);
@@ -174,7 +148,8 @@ public class DemoApi {
                 System.out.println("\tFrom: " + getBasicInfo(fromEnt, content));
                 System.out.println("\t  To: " + getBasicInfo(toEnt, content));
             }
-            if (umlsOutput.length() > 1) {
+            String umlsOutput = getUmlsOutput(entityObject);
+            if (umlsOutput != null) {
                 System.out.println(umlsOutput);
             }
             JsonObject attrs = entityObject.getAsJsonObject("attrs");//extra data
@@ -184,6 +159,29 @@ public class DemoApi {
                 }
             }
         }
+    }
+
+    private static String getUmlsOutput(JsonObject entityObject) {
+        JsonArray umlsConcepts = entityObject.getAsJsonArray("umlsConcepts");
+        if (umlsConcepts != null) {
+            StringBuilder umlsOutput = new StringBuilder("\t");
+            for (JsonElement concept : umlsConcepts) {
+                String tui = concept.getAsJsonObject().getAsJsonPrimitive("tui").getAsString();
+                if (tui.length() > 0) {
+                    umlsOutput.append("TUI: ").append(tui).append(" ");
+                }
+                String code = concept.getAsJsonObject().getAsJsonPrimitive("code").getAsString();
+                if (code.length() > 0) {
+                    umlsOutput.append("code: ").append(code).append(" ");
+                }
+                String preferredText = concept.getAsJsonObject().getAsJsonPrimitive("preferredText").getAsString();
+                if (preferredText.length() > 0) {
+                    umlsOutput.append("preferredText: ").append(preferredText).append(" ");
+                }
+            }
+            return umlsOutput.toString();
+        }
+        return null;
     }
 
     private static String getBasicInfo(JsonObject entityObject, String content) {
