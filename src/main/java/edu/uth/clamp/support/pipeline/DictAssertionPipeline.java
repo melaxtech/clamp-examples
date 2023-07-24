@@ -16,7 +16,7 @@ import edu.uth.clamp.nlp.structure.Document;
 public class DictAssertionPipeline {
 	
 	public static void main( String[] argv ) throws IOException, DocumentIOException, ConfigurationException, UIMAException {
-		String basedir = "/Users/jwang16/Desktop/clamp_meeting/ClampMac_1.5.0.ori/workspace/MyPipeline/DictAssertionPipeline/Components/";
+		String basedir = "_Absolute_Path_to_Clamp_Components/";
 		DocProcessor proc1 = (DocProcessor) NLPProcessorConf.fromFile( new File( basedir + "./Sentence detector/DF_Clamp_sentence_detector/config.conf" ) ).createDocProc();
 		DocProcessor proc2 = (DocProcessor) NLPProcessorConf.fromFile( new File( basedir + "./Tokenizer/DF_Clamp_tokenizer/config.conf" ) ).createDocProc();
 		DocProcessor proc3 = (DocProcessor) NLPProcessorConf.fromFile( new File( basedir + "./POS tagger/DF_OpenNLP_POS_tagger/config.conf" ) ).createDocProc();

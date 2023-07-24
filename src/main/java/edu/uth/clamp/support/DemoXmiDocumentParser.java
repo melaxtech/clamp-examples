@@ -11,10 +11,11 @@ import edu.uth.clamp.nlp.structure.ClampToken;
 import edu.uth.clamp.nlp.structure.Document;
 import edu.uth.clamp.nlp.structure.XmiUtil;
 
+//For parsing xmi output from a pipeline
 public class DemoXmiDocumentParser {
 
 	public static void main( String[] argv ) throws UIMAException, IOException {
-		Document doc = new Document( "sample_1041.xmi" );
+		Document doc = new Document( "data/inputXmi/sample_1069.xmi" );
 		
 		System.out.println( "Filename of the document is [" + doc.getFileName() + "]" );
 		System.out.println( "file length of the document is [" + doc.getFileContent().length() + "]" );

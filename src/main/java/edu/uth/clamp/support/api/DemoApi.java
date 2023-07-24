@@ -1,6 +1,11 @@
 package edu.uth.clamp.support.api;
 
 import com.google.gson.*;
+import edu.uth.clamp.nlp.structure.Document;
+import org.apache.uima.cas.impl.XmiCasDeserializer;
+import org.apache.uima.cas.impl.XmiCasSerializer;
+import org.apache.uima.jcas.JCas;
+import org.apache.uima.util.XMLSerializer;
 
 import java.io.*;
 import java.net.*;
@@ -12,32 +17,40 @@ import java.util.Map;
 public class DemoApi {
     private static String base_url = "http://localhost:8080";
 
-    //First command line parameter is optional URL for pipeline, defaults to http://localhost:8080
+    //First command line parameter is xmi or json for which api endpoint to call
+    // Second parameter is optional URL for pipeline, defaults to http://localhost:8080 (if parameter doesn't begin with http it is assumed to be text to send to pipeline
     //If other command line parameters are present then they are all concatenated together and sent to the pipeline
     public static void main(String[] argv) throws IOException {
-        boolean argv0_url=false;
-        if (argv.length>0 && argv[0].startsWith("http")) {
-            base_url = argv[0];
-            argv0_url=true;
+        boolean customBaseUrl = false;
+
+        if (argv.length == 0 || (!argv[0].equalsIgnoreCase("xmi") && !argv[0].equalsIgnoreCase("json"))) {
+            System.out.println("First parameter should be xmi or json for api endpoint format");
         }
-       // String data = "Taking ibuprofen for Monoplegia of left lower extremity affecting nondominant side";
+        if (argv.length > 1 && argv[1].startsWith("http")) {
+            base_url = argv[1];
+            customBaseUrl = true;
+        }
+        // String data = "Taking ibuprofen for Monoplegia of left lower extremity affecting nondominant side";
         String data = """
                 ASSESSMENT: # Chronic kidney disease stage 4 due to type 2 diabetes mellitus : FU with nephro, # Chronic kidney disease stage 4 : as above # Mechanical low back pain : medrol dose pak/ check xray of LS spine PLAN: Plan printed and provided to patient: FU 1 month PROVIDED: Patient Education (8/28/2019)
                 """;
-        if (argv.length >1 || (argv.length==1 && !argv[0].startsWith("http"))) {
-            data = String.join(" ", argv);
-            if (argv0_url) {
-                data = data.substring(argv[0].length()+1);
+        if (argv.length > 2 || (argv.length == 2 && !argv[1].startsWith("http"))) {
+            data = String.join(" ", argv).substring(argv[0].length() + 1);
+            if (customBaseUrl) {
+                data = data.substring(argv[1].length() + 1);
             }
         }
-
-        HttpURLConnection connection = createConnection(data);
+        HttpURLConnection connection;
+        if (argv[0].equalsIgnoreCase("xmi")) {
+            connection = createConnection(argv[0], data);
+        } else {
+            connection = createConnection(argv[0], data);
+        }
         int responseCode = connection.getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK) {
             reportError(connection, responseCode);
             return;
         }
-
         StringBuilder responseBody = new StringBuilder();
         String line;
         try (InputStreamReader read = new InputStreamReader(connection.getInputStream());
@@ -49,13 +62,24 @@ public class DemoApi {
             System.out.println("Error reading input stream from Normalize response\n" + e.toString());
             return;
         }
-        processJson(responseBody.toString());
+        if (argv[0].equalsIgnoreCase("xmi")) {
+            try (PrintWriter pw = new PrintWriter("demoTest.xmi")) {
+                pw.write(responseBody.toString());
+            }
+        } else {
+            processJson(responseBody.toString());
+        }
     }
 
-    private static HttpURLConnection createConnection(String data) throws IOException {
+    private static HttpURLConnection createConnection(String type, String data) throws IOException {
         String urlParameters = "query=" + data;
         byte[] postData = urlParameters.getBytes(StandardCharsets.UTF_8);
-        URL url = new URL(base_url + "/pipeline/json");
+        URL url;
+        if (type.equalsIgnoreCase("xmi")) {
+            url = new URL(base_url + "/pipeline/xmi");
+        } else {
+            url = new URL(base_url + "/pipeline/json");
+        }
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setInstanceFollowRedirects(false);
@@ -150,7 +174,7 @@ public class DemoApi {
                 System.out.println("\tFrom: " + getBasicInfo(fromEnt, content));
                 System.out.println("\t  To: " + getBasicInfo(toEnt, content));
             }
-            if (umlsOutput.length() >1) {
+            if (umlsOutput.length() > 1) {
                 System.out.println(umlsOutput);
             }
             JsonObject attrs = entityObject.getAsJsonObject("attrs");//extra data

@@ -12,14 +12,12 @@ import opennlp.tools.sentdetect.SentenceDetector;
 import opennlp.tools.tokenize.Tokenizer;
 
 public class DemoTokenizer {
-
-	
 	public static void main( String[] argv ) throws IOException {
 		SentenceDetector sentDetector = ClampSentDetector.getDefault();
 		Tokenizer tokenizer = ClampTokenizer.getDefault();
 
 		File inputDir = new File( "data/input/mtsamples/" );
-		String outputDir = "data/output/mtsamples/";
+		String outputDir = "data/tokenOutput/mtsamples/";
 		for( File file : inputDir.listFiles() ) {
 			if( !file.isFile() 
 					|| file.getName().startsWith( "." )
@@ -39,7 +37,5 @@ public class DemoTokenizer {
 			writer.close();
 			System.out.println( file.getName() + " is processed.." );
 		}
-		
-		return;
 	}
 }
