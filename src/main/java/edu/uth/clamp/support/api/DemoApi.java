@@ -5,6 +5,8 @@ import com.google.gson.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,25 +18,40 @@ public class DemoApi {
     // Second parameter is optional URL for pipeline, defaults to http://localhost:8080 (if parameter doesn't begin with http it is assumed to be text to send to pipeline
     //If other command line parameters are present then they are all concatenated together and sent to the pipeline
     public static void main(String[] argv) throws IOException {
-        boolean customBaseUrl = false;
-
+        int skipArgs = 0;
         if (argv.length == 0 || (!argv[0].equalsIgnoreCase("html") && !argv[0].equalsIgnoreCase("xmi") && !argv[0].equalsIgnoreCase("json"))) {
-            System.out.println("First parameter should be html xmi or json for api endpoint format");
+            System.out.println("""
+First parameter should be html xmi or json for api endpoint format.
+Second parameter is option. If it begins with http it is assumed to be the URL to backend pipeline.
+Next parameter is either the word file followed by a filename, or the text to be processed.
+If no text is given, default text is used.
+""");
+            return;
         }
         if (argv.length > 1 && argv[1].startsWith("http")) {
             base_url = argv[1];
-            customBaseUrl = true;
+            skipArgs++;
         }
         // String data = "Taking ibuprofen for Monoplegia of left lower extremity affecting nondominant side";
         String data = """
                 ASSESSMENT: # Chronic kidney disease stage 4 due to type 2 diabetes mellitus : FU with nephro, # Chronic kidney disease stage 4 : as above # Mechanical low back pain : medrol dose pak/ check xray of LS spine PLAN: Plan printed and provided to patient: FU 1 month PROVIDED: Patient Education (8/28/2019)
                 """;
-        if (argv.length > 2 || (argv.length == 2 && !argv[1].startsWith("http"))) {
+
+        if (argv.length > 1 + skipArgs && argv[1+skipArgs].equalsIgnoreCase("file")) {
+            if (argv.length > 2 + skipArgs) {
+                data = Files.readString(Path.of(argv[2 + skipArgs]));
+            } else {
+                System.out.println("file chosen for input but no filename given");
+                return;
+            }
+        } else if (argv.length > 1 + skipArgs) {
             data = String.join(" ", argv).substring(argv[0].length() + 1);
-            if (customBaseUrl) {
-                data = data.substring(argv[1].length() + 1);
+            for (int i=0; i< skipArgs; i++) {
+                data = data.substring(argv[1+i].length() + 1);
             }
         }
+        System.out.println ("skipArgs:" + skipArgs + ", baseurl: " + base_url + "\n\tdata: " + data);
+        if(true) return;
         HttpURLConnection connection = createConnection(argv[0], data);
         int responseCode = connection.getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK) {
