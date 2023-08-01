@@ -5,7 +5,7 @@ To debug and run, you will need to contact the CLAMP team for a valid license (h
 
 
 # Build and Run
-You will need access to the MelaxTech Nexus repository. Please contact us for that.
+You will need access to the MelaxTech Nexus repository and a CLAMP License file. Please contact us for those.
 
 First, ~/.m2/settings.xml must be updated (if it exists) or created.
 If you do not have a file, then create one with this text:
@@ -57,6 +57,8 @@ If you already have a settings.xml file then just add the 2 server to your serve
 ```
 
 Replace USERNAME and PASSWORD accordingly.
+
+Next, create the folder src/main/resources/clamp/license/control and place the CLAMP.LICENSE file that was sent to you in that folder.
 
 ```bash
 #to build the backend package
