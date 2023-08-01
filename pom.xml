@@ -15,7 +15,7 @@
     </parent>
     <repositories>
         <repository>
-            <id>melax-developer-nexus-releases</id>
+            <id>melax-nexus-releases</id>
             <name>Melax Nexus Release Repository</name>
             <url>https://nexusrelease.melaxtech.com/repository/maven-releases/</url>
             <releases>
@@ -23,6 +23,18 @@
             </releases>
             <snapshots>
                 <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>melax-nexus-snapshots</id>
+            <name>Melaxdev Nexus Snapshot Repository</name>
+            <url>https://nexusrelease.melaxtech.com/repository/maven-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
     </repositories>
