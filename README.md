@@ -5,6 +5,59 @@ To debug and run, you will need to contact the CLAMP team for a valid license (h
 
 
 # Build and Run
+You will need access to the MelaxTech Nexus repository. Please contact us for that.
+
+First, ~/.m2/settings.xml must be updated (if it exists) or created.
+If you do not have a file, then create one with this text:
+```bash
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                          https://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <localRepository/>
+    <interactiveMode/>
+    <usePluginRegistry/>
+    <offline/>
+    <pluginGroups>
+        <pluginGroup>org.jenkins-ci.tools</pluginGroup>
+    </pluginGroups>
+    <servers>
+        <server>
+            <id>melax-nexus-releases</id>
+            <username>USERNAME</username>
+            <password>PASSWORD</password>
+        </server>
+        <server>
+            <id>melax-nexus-snapshots</id>
+            <username>USERNAME</username>
+            <password>PASSWORD</password>
+        </server>
+    </servers>
+      <mirrors>
+    </mirrors>
+
+     <proxies/>
+    <profiles/>
+    <activeProfiles/>
+</settings>
+```
+If you already have a settings.xml file then just add the 2 server to your servers section:
+```bash
+        <server>
+            <id>melax-nexus-releases</id>
+            <username>USERNAME</username>
+            <password>PASSWORD</password>
+        </server>
+        <server>
+            <id>melax-nexus-snapshots</id>
+            <username>USERNAME</username>
+            <password>PASSWORD</password>
+        </server>
+```
+
+Replace USERNAME and PASSWORD accordingly.
+
 ```bash
 #to build the backend package
 `mvn clean package` 
