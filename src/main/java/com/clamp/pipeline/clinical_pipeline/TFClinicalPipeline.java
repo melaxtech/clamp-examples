@@ -39,8 +39,8 @@ import edu.uth.clamp.nlp.structure.Document;
 import edu.uth.clamp.nlp.uima.RutaScriptUIMA;
 import edu.uth.clamp.nlp.uima.UmlsEncoderUIMA;
 import edu.uth.clamp.nlp.uima.NegExAssertionUIMA;
-import ner.CharLSTMNERUIMA;
-import relation.CharLSTMREUIMA;
+//import ner.CharLSTMNERUIMA;
+//import relation.CharLSTMREUIMA;
 
 public class TFClinicalPipeline extends DefalutPipeline {
 

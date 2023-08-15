@@ -5,6 +5,8 @@ import com.google.gson.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,30 +18,90 @@ public class DemoApi {
     // Second parameter is optional URL for pipeline, defaults to http://localhost:8080 (if parameter doesn't begin with http it is assumed to be text to send to pipeline
     //If other command line parameters are present then they are all concatenated together and sent to the pipeline
     public static void main(String[] argv) throws IOException {
-        boolean customBaseUrl = false;
-
+        int skipArgs = 0;
         if (argv.length == 0 || (!argv[0].equalsIgnoreCase("html") && !argv[0].equalsIgnoreCase("xmi") && !argv[0].equalsIgnoreCase("json"))) {
-            System.out.println("First parameter should be html xmi or json for api endpoint format");
+            System.out.println("""
+                    First parameter should be html xmi or json for api endpoint format.
+                    Second parameter is option. If it begins with http it is assumed to be the URL to backend pipeline.
+                    Next parameter is either the word file followed by a filename, directory followed by input and output directories, or the text to be processed.
+                    If no text is given, default text is used.
+                    """);
+            return;
         }
         if (argv.length > 1 && argv[1].startsWith("http")) {
             base_url = argv[1];
-            customBaseUrl = true;
+            skipArgs++;
         }
         // String data = "Taking ibuprofen for Monoplegia of left lower extremity affecting nondominant side";
         String data = """
                 ASSESSMENT: # Chronic kidney disease stage 4 due to type 2 diabetes mellitus : FU with nephro, # Chronic kidney disease stage 4 : as above # Mechanical low back pain : medrol dose pak/ check xray of LS spine PLAN: Plan printed and provided to patient: FU 1 month PROVIDED: Patient Education (8/28/2019)
                 """;
-        if (argv.length > 2 || (argv.length == 2 && !argv[1].startsWith("http"))) {
+        String inDir = null;
+        String outDir = null;
+        if (argv.length > 1 + skipArgs && argv[1 + skipArgs].equalsIgnoreCase("directory")) {
+            if (argv.length > 3 + skipArgs) {
+                inDir = argv[2 + skipArgs];
+                outDir = argv[3 + skipArgs];
+            } else {
+                System.out.println("directory chosen for input but input and output directories not given");
+                return;
+            }
+        } else if (argv.length > 1 + skipArgs && argv[1 + skipArgs].equalsIgnoreCase("file")) {
+            if (argv.length > 2 + skipArgs) {
+                data = Files.readString(Path.of(argv[2 + skipArgs]));
+            } else {
+                System.out.println("file chosen for input but no filename given");
+                return;
+            }
+        } else if (argv.length > 1 + skipArgs) {
             data = String.join(" ", argv).substring(argv[0].length() + 1);
-            if (customBaseUrl) {
-                data = data.substring(argv[1].length() + 1);
+            for (int i = 0; i < skipArgs; i++) {
+                data = data.substring(argv[1 + i].length() + 1);
             }
         }
+        if (inDir != null) {
+            processDirectories(argv[0], inDir, outDir);
+            return;
+        }
         HttpURLConnection connection = createConnection(argv[0], data);
+        String result = processConnection(connection);
+        if (argv[0].equalsIgnoreCase("json")) {
+            processJson(result);
+        } else {
+            try (PrintWriter pw = new PrintWriter("demoTest." + argv[0], StandardCharsets.UTF_8)) {
+                pw.write(result);
+            }
+        }
+    }
+
+    private static void processDirectories(String type, String inDir, String outDir) throws IOException {
+        File inFolder = new File(inDir);
+        for (File file : inFolder.listFiles()) {
+            if (!file.getName().endsWith(".txt")) {
+                continue;
+            }
+            String data;
+            try {
+                data = Files.readString(file.toPath());
+            } catch (IOException e) {
+                System.err.println("Failed to read " + file.getName());
+                continue;
+            }
+            HttpURLConnection connection = createConnection(type, data);
+            String result = processConnection(connection);
+
+            PrintWriter output = new PrintWriter(outDir + "/" + file.getName().replace(".txt", "." + type));
+            output.write(result);
+            output.close();
+            System.out.println("Processed " + file.getName());
+        }
+    }
+
+    private static String processConnection(HttpURLConnection connection) throws IOException {
         int responseCode = connection.getResponseCode();
         if (responseCode != HttpURLConnection.HTTP_OK) {
             reportError(connection, responseCode);
-            return;
+            throw new IOException(String.valueOf(responseCode));
         }
         StringBuilder responseBody = new StringBuilder();
         String line;
@@ -49,16 +111,10 @@ public class DemoApi {
                 responseBody.append(line).append("\n");
             }
         } catch (IOException e) {
-            System.out.println("Error reading input stream from Normalize response\n" + e.toString());
-            return;
+            System.out.println("Error reading input stream from Normalize response\n");
+            throw (e);
         }
-        if (argv[0].equalsIgnoreCase("json")) {
-            processJson(responseBody.toString());
-        } else {
-            try (PrintWriter pw = new PrintWriter("demoTest." + argv[0], StandardCharsets.UTF_8)) {
-                pw.write(responseBody.toString());
-            }
-        }
+        return responseBody.toString();
     }
 
     private static HttpURLConnection createConnection(String type, String data) throws IOException {
